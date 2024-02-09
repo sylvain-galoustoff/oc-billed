@@ -25,7 +25,7 @@ export default class NewBill {
     const fileName = filePath[filePath.length - 1];
     /* BUG FIX HERE */
     const fileExtension = fileName.split(".")[1];
-    const allowedExtensions = ["png", "jpeg", "jpeg"];
+    const allowedExtensions = ["png", "jpeg", "jpg"];
 
     if (allowedExtensions.includes(fileExtension.toLowerCase())) {
       const formData = new FormData();
