@@ -73,15 +73,12 @@ export default class {
     this.onNavigate = onNavigate
     this.store = store
     $('#arrow-icon1').click((e) => {
-      $('.bill-card').off()
       this.handleShowTickets(e, bills, 1)
     })
     $('#arrow-icon2').click((e) => {
-      $('.bill-card').off()
       this.handleShowTickets(e, bills, 2)
     })
     $('#arrow-icon3').click((e) => {
-      $('.bill-card').off()
       this.handleShowTickets(e, bills, 3)
     })
     new Logout({ localStorage, onNavigate })
@@ -140,6 +137,8 @@ export default class {
   }
 
   handleShowTickets(e, bills, index) {
+
+    $('.bill-card').off()
     if (this.counter === undefined || this.index !== index) this.counter = 0
     if (this.index === undefined || this.index !== index) this.index = index
     if (this.counter % 2 === 0) {

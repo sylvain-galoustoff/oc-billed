@@ -7,8 +7,10 @@ import BillsUI from "../views/BillsUI.js"
 import { bills } from "../fixtures/bills.js"
 import { ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
+import Bills from "../containers/Bills.js";
 
 import router from "../app/Router.js";
+import userEvent from "@testing-library/user-event";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -35,5 +37,25 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+    
+    describe("When I click on icon eye", () => {
+      test("Then modal appears", async () => {
+        window.$ = jest.fn().mockImplementation(() => {
+           return {
+              modal: jest.fn()
+            }
+        });
+        const billsContainer = new Bills({document, onNavigate, store:null, localStorage: window.localStorage})
+        document.body.innerHTML = BillsUI({ data: bills })
+        //Récuperer un icone d'oeil
+        // await waitFor(() => screen.getByTestId('icon-eye'))
+        const eyeIcon = screen.getByTestId('icon-eye-0')
+        const handleClickIconEye = jest.fn((e) => billsContainer.handleClickIconEye(eyeIcon))
+        eyeIcon.addEventListener('click', handleClickIconEye)
+        userEvent.click(eyeIcon)
+
+        expect(screen.getByTestId(`modal`).classList.contains('show')).toBeTruthy()
+      })
+    }) 
   })
 })
