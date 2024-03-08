@@ -8,12 +8,10 @@ import Bills from "../containers/Bills.js";
 import { bills } from "../fixtures/bills.js";
 import { ROUTES_PATH } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
-import Bills from "../containers/Bills.js";
 import userEvent from "@testing-library/user-event";
-import mockStore from "../__mocks__/store"
+import mockStore from "../__mocks__/store";
 
 import router from "../app/Router.js";
-import userEvent from "@testing-library/user-event";
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -36,32 +34,46 @@ describe("Given I am connected as an employee", () => {
       const windowIcon = screen.getByTestId("icon-window");
       expect(windowIcon.classList.contains("active-icon")).toBeTruthy();
     });
+
+    test("Then rows should be displayed in tbody", async () => {
+      document.body.innerHTML = BillsUI({ data: bills });
+      const tbody = screen.getByTestId("tbody");
+      expect(tbody).toContainHTML("<tr></tr>");
+    });
+
     test("Then bills should be ordered from earliest to latest", () => {
-      document.body.innerHTML = BillsUI({ data: bills })
-      const dates = screen.getAllByText(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i).map(a => a.innerHTML)
-      const antiChrono = (a, b) => ((a < b) ? 1 : -1)
-      const datesSorted = [...dates].sort(antiChrono)
-      expect(dates).toEqual(datesSorted)
-    })
-    
+      document.body.innerHTML = BillsUI({ data: bills });
+      const dates = screen
+        .getAllByText(
+          /^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/i
+        )
+        .map((a) => a.innerHTML);
+      const antiChrono = (a, b) => (a < b ? 1 : -1);
+      const datesSorted = [...dates].sort(antiChrono);
+      expect(dates).toEqual(datesSorted);
+    });
+
     describe("When I click on icon eye", () => {
       test("Then modal appears", async () => {
-        window.$ = jest.fn().mockImplementation(() => {
-           return {
-              modal: jest.fn()
-            }
+        $.fn.modal = jest.fn();
+        const billsContainer = new Bills({
+          document,
+          onNavigate,
+          store: null,
+          localStorage: window.localStorage,
         });
-        const billsContainer = new Bills({document, onNavigate, store:null, localStorage: window.localStorage})
-        document.body.innerHTML = BillsUI({ data: bills })
-        //Récuperer un icone d'oeil
-        // await waitFor(() => screen.getByTestId('icon-eye'))
-        const eyeIcon = screen.getByTestId('icon-eye-0')
-        const handleClickIconEye = jest.fn((e) => billsContainer.handleClickIconEye(eyeIcon))
-        eyeIcon.addEventListener('click', handleClickIconEye)
-        userEvent.click(eyeIcon)
+        document.body.innerHTML = BillsUI({ data: bills });
+        await waitFor(() => screen.getByTestId("icon-eye-0"));
+        const eyeIcon = screen.getByTestId("icon-eye-0");
+        const handleClickIconEye = jest.fn((e) =>
+          billsContainer.handleClickIconEye(eyeIcon)
+        );
+        eyeIcon.addEventListener("click", handleClickIconEye);
+        userEvent.click(eyeIcon);
 
-        expect(screen.getByTestId(`modal`).classList.contains('show')).toBeTruthy()
-      })
-    }) 
-  })
-})
+        expect(handleClickIconEye).toHaveBeenCalled();
+        expect(screen.getByTestId("modal").querySelector("img")).toBeTruthy();
+      });
+    });
+  });
+});

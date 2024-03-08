@@ -9,7 +9,8 @@ export default class {
     this.store = store
     const buttonNewBill = document.querySelector(`button[data-testid="btn-new-bill"]`)
     if (buttonNewBill) buttonNewBill.addEventListener('click', this.handleClickNewBill)
-    const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`)
+    // const iconEye = document.querySelectorAll(`div[data-testid="icon-eye"]`) // Wrong selector
+    const iconEye = document.querySelectorAll(`div[data-testid^="icon-eye"]`)
     if (iconEye) iconEye.forEach(icon => {
       icon.addEventListener('click', () => this.handleClickIconEye(icon))
     })
@@ -34,7 +35,8 @@ export default class {
       .list()
       .then(snapshot => {
         const bills = snapshot
-          .map(doc => {
+        .map(doc => {
+            console.log(snapshot);
             try {
               return {
                 ...doc,
