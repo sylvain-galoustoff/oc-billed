@@ -4,7 +4,7 @@ import LoadingPage from "./LoadingPage.js"
 
 import Actions from './Actions.js'
 
-const row = (bill) => {
+const row = (bill, index) => {
   return (`
     <tr>
       <td>${bill.type}</td>
@@ -13,7 +13,7 @@ const row = (bill) => {
       <td>${bill.amount} €</td>
       <td>${bill.status}</td>
       <td>
-        ${Actions(bill.fileUrl)}
+        ${Actions(bill.fileUrl, index)}
       </td>
     </tr>
     `)
@@ -22,13 +22,13 @@ const row = (bill) => {
 const rows = (data) => {
   const antiChrono = (a, b) => ((a.date < b.date) ? 1 : -1)
   data?.sort(antiChrono)
-  return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
+  return (data && data.length) ? data.map((bill, index) => row(bill, index)).join("") : ""
 }
 
 export default ({ data: bills, loading, error }) => {
   
   const modal = () => (`
-    <div class="modal fade" data-testid="modal" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" data-testid="modal" id="modaleFile" data-testid="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
